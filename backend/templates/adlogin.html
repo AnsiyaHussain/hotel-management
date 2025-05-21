@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login</title>
+</head>
+<body>
+    <div class="dashboard">
+        <div class="main-content">
+            <div class="login-card">
+                <h2>Login</h2>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" name="usr" placeholder="Enter your username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="psw" placeholder="Enter your password" required>
+                    </div><br><br>
+                    <button type="submit" class="btn-primary">Login</button>
+                </form>
+                {% if error %}
+                    <div style="color: red;">{{ error }}</div>
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+    <style>
+        :root {
+            --primary-color: #343435;
+            --secondary-color: #8e2de2;
+            --accent-color: #00fff0;
+            --background-color: #0f0f1e;
+            --surface-color: #1a1a2e;
+            --text-primary: #ffffff;
+            --text-secondary: #b3b3b3;
+            --success-color: #00ff9d;
+            --warning-color: #ffd700;
+            --danger-color: #ff4757;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-primary);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .login-card {
+            background-color: var(--surface-color);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2), 0 0 100px var(--accent-color);
+            width: 300px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-card::before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 355, 340, 0.2);
+            border-radius: 10px;
+            z-index: -1;
+            filter: blur(30px);
+            transform: translate(-50%, -50%);
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            color: var(--accent-color);
+            text-align: center;
+            position: relative;
+            z-index: 1; /* Ensure text is above the glow */
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: var(--text-secondary);
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+            position: relative;
+            transition: box-shadow 0.3s ease;
+        }
+
+        .form-group input[type="text"]:focus,
+        .form-group input[type="password"]:focus {
+            outline: none;
+            box-shadow: 0 0 5px var(--accent-color), 0 0 15px var(--accent-color);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: var(--text-primary);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--secondary-color);
+            box-shadow: 0 0 15px var(--secondary-color);
+        }
+    </style>    
+</body>
+</html>

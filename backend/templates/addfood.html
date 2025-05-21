@@ -1,0 +1,238 @@
+{% extends 'admindex.html' %}
+{% block content %}
+<a href="/manage_food/">Back</a>
+
+<h2 style="font-weight: bold;">ADD FOOD ITEM</h2>
+
+<div id="addFood" class="page-content">
+    <div class="settings-container">
+        <div class="settings-card glow">
+            <form method="post" enctype="multipart/form-data" onsubmit="showAlert(event)">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="category">Select Category</label>
+                    <select id="category" name="category" class="styled-select" required>
+                        {% for category in categories %}
+                            <option value="{{ category.id }}">{{ category.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="foodName">Food Item Name</label>
+                    <input type="text" id="foodName" name="food_name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="foodPrice">Price</label>
+                    <input type="number" id="foodPrice" name="price" step="0.01" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="inputGroupFile01" class="file-label">
+                        Upload Image
+                        <input type="file" class="form-control" id="inputGroupFile01" name="food_image" required onchange="previewImage(event)">
+                    </label>
+                </div>
+                <img id="imagePreview" src="#" alt="Image Preview" style="display: none; margin-top: 10px; max-width: 0px; border-radius: 5px;"/>
+                
+                
+                <br>
+
+                <button type="submit" class="btn-primary">Add Food Item</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="alert" class="alert" style="display: none;">Food item added successfully!</div>
+
+<style>
+    /* General Styles */
+    /* Custom Styles for Select and File Inputs */
+.styled-select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: white;
+    appearance: none; /* Remove default styling */
+    background-image: url('data:image/png;base64,...'); /* Add a custom arrow icon here */
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 15px; /* Size of the custom arrow icon */
+}
+
+.styled-select:focus {
+    border-color: #3498db;
+    outline: none;
+}
+
+/* File Input Styles */
+.styled-file {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    background-color: white;
+}
+
+.styled-file::-webkit-file-upload-button {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+.styled-file::-webkit-file-upload-button:hover {
+    background-color: #2980b9;
+}
+
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        color: #333;
+    }
+
+    .page-content {
+        max-width: 600px;
+        margin: 20px auto;
+        padding: 20px;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Card Styles */
+    .settings-card {
+        padding: 20px;
+        border-radius: 8px;
+        background-color: #ffffff;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s;
+    }
+
+    .settings-card.glow:hover {
+        transform: scale(1.02);
+    }
+
+    /* Heading Styles */
+    h1, h2, h3 {
+        color: #2c3e50;
+        margin-bottom: 15px;
+    }
+
+    h2 {
+        text-align: center;
+    }
+
+    /* Form Styles */
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+
+    input[type="text"],
+    textarea {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-sizing: border-box;
+    }
+
+    input[type="text"]:focus,
+    textarea:focus {
+        border-color: #3498db;
+        outline: none;
+    }
+
+    /* Button Styles */
+    .btn-primary {
+        background-color: #3498db;
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background-color 0.3s;
+    }
+
+    .btn-primary:hover {
+        background-color: #2980b9;
+    }
+
+    /* Alert Styles */
+    .alert {
+        background-color: #4CAF50; /* Green */
+        color: white;
+        padding: 15px;
+        margin: 20px 0;
+        border-radius: 5px;
+        text-align: center;
+    }
+    input[type="file"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    background-color: white;
+    padding-bottom: 30px;
+}
+
+</style>
+
+<script>
+    function showAlert(event) {
+        event.preventDefault(); // Prevent form submission
+        document.getElementById('alert').style.display = 'block';
+        
+        setTimeout(function() {
+            document.getElementById('alert').style.display = 'none';
+            event.target.submit(); // Submit the form after showing the alert
+        }, 2000);
+    }
+</script>
+<script>
+    function showAlert(event) {
+        event.preventDefault(); // Prevent form submission
+        document.getElementById('alert').style.display = 'block';
+        
+        setTimeout(function() {
+            document.getElementById('alert').style.display = 'none';
+            event.target.submit(); // Submit the form after showing the alert
+        }, 2000);
+    }
+
+    function previewImage(event) {
+        const file = event.target.files[0];
+        const reader = new FileReader();
+        
+        reader.onload = function(e) {
+            const imagePreview = document.getElementById('imagePreview');
+            imagePreview.src = e.target.result; // Set the src to the file's data URL
+            imagePreview.style.display = 'block'; // Show the preview
+        }
+
+        if (file) {
+            reader.readAsDataURL(file); // Convert the file to a data URL
+        } else {
+            document.getElementById('imagePreview').style.display = 'none'; // Hide the preview if no file
+        }
+    }
+</script>
+
+
+{% endblock %}

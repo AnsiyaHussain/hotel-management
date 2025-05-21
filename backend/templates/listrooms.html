@@ -1,0 +1,167 @@
+{% extends 'room.html' %}
+{% block content %}
+{% load static %}
+<link href="{% static 'css/style.css' %}" rel="stylesheet">
+
+<!-- Page Header Start -->
+<div class="container-fluid page-header mb-5 wow fadeIn" style="background-image: url('{% static 'img/a1.jpg' %}'); data-wow-delay="0.1s">
+    <div class="container">
+        <h1 class="display-3 mb-3 animated slideInDown">{{ category.name }} Rooms</h1>
+        <nav aria-label="breadcrumb animated slideInDown">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a class="text-body" href="/index/">Home</a></li>
+                <li class="breadcrumb-item"><a class="text-body" href="/rooms/">Category</a></li>
+                <li class="breadcrumb-item text-dark active" aria-current="page">{{ category.name }} Rooms</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+<!-- Page Header End -->
+
+<!-- Rooms List Section -->
+<div class="container mt-5">
+    <h3 class="text-center mb-4"style="color:brown">Explore {{ category.name }} Rooms</h3>
+    <div style="width: 1100px;text-align: center;margin-bottom: 20px;">
+    <p>{{category.categoryDescription}}</p>
+    </div>
+    <div class="row">
+        {% for room in rooms %}
+        <div class="col-lg-3 col-md-4 mb-4">
+            <div class="card h-100"> <!-- Ensure card takes full height -->
+                <img src="{{ room.image.url }}" alt="{{ room.roomnum }}" class="card-img-top room-image">
+                <div class="card-body d-flex flex-column"> <!-- Flex to keep content aligned and cards same size -->
+                    <h5 class="card-title">{{ room.roomnum }}</h5>
+                    <p class="card-text"><strong>Description:</strong> 
+                        {% if room.description|length > 100 %}
+                            {{ room.description|slice:":100" }}...
+                            <a href="#" data-bs-toggle="modal" data-bs-target="#descriptionModal" data-description="{{ room.description }}">Read More</a>
+                        {% else %}
+                            {{ room.description }}
+                        {% endif %}
+                    </p>
+                    <p class="card-text"><strong>Price:</strong> <mark>₹{{ room.price }}</mark> /per night</p>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#bookingModal" data-roomid="{{ room.id }}" data-roomnum="{{ room.roomnum }}" data-price="{{ room.price }}">
+                        Book Now
+                    </button>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p>No available rooms in this category.</p>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Modal for Description -->
+<div class="modal fade" id="descriptionModal" tabindex="-1" aria-labelledby="descriptionModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="descriptionModalLabel">Room Description</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="modal-description">
+                <!-- Full Description will be dynamically inserted here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for Booking -->
+<div class="modal fade" id="bookingModal" tabindex="-1" aria-labelledby="bookingModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="bookingModalLabel">Room Booking</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="POST" action="{% url 'book_room' %}">
+                    {% csrf_token %}
+                    <input type="hidden" id="room_id" name="room_id">
+                    <input type="hidden" id="room_price" name="room_price">
+                    <div class="mb-3">
+                        <label for="phone_number" class="form-label">Phone Number</label>
+                        <input type="text" class="form-control" id="phone_number" name="phone_number" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="address" class="form-label">Address</label>
+                        <textarea class="form-control" id="address" name="address" rows="3" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="age" class="form-label">Age</label>
+                        <input type="number" class="form-control" id="age" name="age" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="num_people" class="form-label">Number of People</label>
+                        <input type="number" class="form-control" id="num_people" name="num_people" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="num_nights" class="form-label">Number of Nights</label>
+                        <input type="number" class="form-control" id="num_nights" name="num_nights" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="total_amount" class="form-label">Total Amount</label>
+                        <input type="text" class="form-control" id="total_amount" name="total_amount" readonly>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit Booking</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .room-image {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+    }
+
+    .card {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .card-body {
+        flex: 1;
+    }
+</style>
+
+<script>
+    // Handle the modal data population when "Read More" link is clicked
+    const descriptionModal = document.getElementById('descriptionModal');
+    descriptionModal.addEventListener('show.bs.modal', function (event) {
+        const button = event.relatedTarget;
+        const fullDescription = button.getAttribute('data-description');
+        
+        const modalDescription = descriptionModal.querySelector('#modal-description');
+        modalDescription.textContent = fullDescription;
+    });
+
+    // Handle the modal data population when "Book Now" button is clicked
+    const bookingModal = document.getElementById('bookingModal');
+    bookingModal.addEventListener('show.bs.modal', function (event) {
+        const button = event.relatedTarget;
+        const roomId = button.getAttribute('data-roomid');
+        const roomNum = button.getAttribute('data-roomnum');
+        const roomPrice = button.getAttribute('data-price');
+        
+        const roomIdInput = bookingModal.querySelector('#room_id');
+        const roomPriceInput = bookingModal.querySelector('#room_price');
+        const totalAmountInput = bookingModal.querySelector('#total_amount');
+        
+        roomIdInput.value = roomId;
+        roomPriceInput.value = roomPrice;
+        
+        // Update the total amount based on room price and number of nights
+        const numNightsInput = bookingModal.querySelector('#num_nights');
+        numNightsInput.addEventListener('input', function () {
+            const numNights = numNightsInput.value;
+            const totalAmount = roomPrice * numNights;
+            totalAmountInput.value = "₹" + totalAmount;
+        });
+    });
+</script>
+
+{% endblock %}

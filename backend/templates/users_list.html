@@ -1,0 +1,45 @@
+{% extends 'admindex.html' %}
+{% block content %}
+
+<h2 class="text-center my-4">Registered Users</h2>
+
+<!-- Total Users Count -->
+<p>Total Users: {{ users.count }}</p>
+
+<!-- Search Form -->
+<form method="GET" action="" class="mb-4 d-flex">
+    <input type="text" name="search" class="form-control me-2" placeholder="Search by Username" value="{{ request.GET.search }}">
+    <button type="submit" class="btn btn-primary">Search</button>
+</form>
+
+
+<table class="table table-striped table-bordered">
+    <thead>
+        <tr>
+            <th>#</th>  
+            <th>Username</th>
+            <th>Email</th>
+            <th>Phone Number</th>
+            <th>Actions</th> 
+        </tr>
+    </thead>
+    <tbody>
+        {% for user in users %}
+        <tr>
+            <td>{{ forloop.counter }}</td> 
+            <td>{{ user.username }}</td>
+            <td>{{ user.email }}</td>
+            <td>{{ user.phnumber }}</td>
+            <td>
+                <a href="/delete_user/{{user.id}}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this user?');">Delete</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="5">No registered users found.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

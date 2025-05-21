@@ -1,0 +1,109 @@
+{% extends 'admindex.html' %}
+{% block content %}
+<div class="container">
+    <h1 style="margin-left: 400px;">Contact List</h1>
+    
+    <table class="table table-bordered" style="width: 1000px;">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Subject</th>
+                <th style="width: 200px;">Message</th>
+                <th>Replyed</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for contact in contact %}
+            <tr>
+                <td>{{ contact.name }}</td>
+                <td>{{ contact.email }}</td>
+                <td>{{ contact.subject }}</td>
+                <td style="width: 300px;">{{ contact.message }}</td>
+                <td>
+                    <label class="custom-checkbox">
+                        <input type="checkbox" name="contact_ids" value="{{ contact.id }}" class="contact-checkbox">
+                        <span class="checkmark"></span>
+                    </label>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" class="text-center">No contacts found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="d-flex justify-content-between mb-3">
+        <form action="{% url 'clear_contacts' %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger" title="Clear All">
+                Clear All
+            </button>
+        </form>
+    </div>
+</div>
+
+<style>
+.custom-checkbox {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.custom-checkbox input {
+    opacity: 0; /* Hide the default checkbox */
+    position: absolute;
+    cursor: pointer;
+}
+
+.checkmark {
+    width: 20px;
+    height: 20px;
+    background-color: #eee;
+    border: 2px solid #ddd;
+    display: inline-block;
+    border-radius: 4px;
+}
+
+.custom-checkbox input:checked ~ .checkmark {
+    background-color: green; /* Background color when checked */
+    border-color: green; /* Border color when checked */
+}
+
+.custom-checkbox input:checked ~ .checkmark:after {
+    content: "";
+    position: absolute;
+    left: 5px;
+    top: 1px;
+    width: 6px;
+    height: 12px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+</style>
+
+<script>
+    // Optional: Add logic to remember checked boxes
+    const checkboxes = document.querySelectorAll('.contact-checkbox');
+    const savedIds = JSON.parse(localStorage.getItem('checkedContacts')) || [];
+
+    checkboxes.forEach(checkbox => {
+        if (savedIds.includes(checkbox.value)) {
+            checkbox.checked = true;
+        }
+
+        checkbox.addEventListener('change', function() {
+            if (this.checked) {
+                savedIds.push(this.value);
+            } else {
+                savedIds.splice(savedIds.indexOf(this.value), 1);
+            }
+            localStorage.setItem('checkedContacts', JSON.stringify(savedIds));
+        });
+    });
+</script>
+
+{% endblock %}

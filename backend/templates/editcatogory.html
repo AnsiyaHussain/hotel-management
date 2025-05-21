@@ -1,0 +1,118 @@
+{% extends 'admindex.html' %}
+{% block content %}
+{% load static %}
+
+<h2>Edit Food Category</h2>
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="form-group">
+        <label for="categoryName">Category Name</label>
+        <input type="text" id="categoryName" name="category_name" value="{{ category.name }}" required>
+    </div>
+    <div class="form-group">
+        <label for="categoryDescription">Description</label>
+        <textarea id="categoryDescription" name="category_description" rows="4" required>{{ category.description }}</textarea>
+    </div>
+
+    <div class="form-group">
+        <label for="inputGroupFile01" class="file-label">
+            <img id="imagePreview" src="{% if category.catimage %}{{ category.catimage.url }}{% else %}{% static 'asset/img/noimg.jpg' %}{% endif %}" alt="Image Preview" class="preview-image">
+            Change Image
+            <input type="file" class="form-control" id="inputGroupFile01" name="category_image" required onchange="previewImage(event)">
+        </label>
+    </div>
+    
+    
+
+
+
+
+    <button type="submit" class="btn-primary">Save Changes</button>
+</form>
+<script>
+    function previewImage(event) {
+        const file = event.target.files[0]; // Get the selected file
+        const reader = new FileReader(); // Create a FileReader object
+
+        reader.onload = function(e) {
+            // Set the src of the image to the loaded file
+            document.getElementById('imagePreview').src = e.target.result;
+        }
+
+        if (file) {
+            reader.readAsDataURL(file); // Read the file as a data URL
+        }
+    }
+</script>
+
+<style>
+    .form-group {
+    position: relative;
+}
+
+.file-label {
+    display: block;
+    position: relative;
+    cursor: pointer;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    text-align: center;
+}
+
+.preview-image {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    display: block;
+    margin: 0 auto 10px; /* Center the image and add space below */
+}
+
+input[type="file"] {
+    display: none; /* Hide the default file input */
+}
+
+    input[type="file"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    background-color: white;
+    padding-bottom: 40px;
+}
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+    label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+    input[type="text"],
+    textarea,
+    input{
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-sizing: border-box;
+    }
+    .btn-primary {
+        background-color: #3498db;
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+    .btn-primary:hover {
+        background-color: #2980b9;
+    }
+</style>
+
+{% endblock %}

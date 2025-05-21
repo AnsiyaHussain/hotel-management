@@ -1,0 +1,188 @@
+{% extends 'menu.html' %}
+{% block content %}
+{% load static %}
+
+<!-- Page Header Start -->
+<div class="container-fluid page-header mb-5 wow fadeIn" style="background-image: url('{% static 'img/a1.jpg' %}');" data-wow-delay="0.1s">
+    <div class="container">
+        <h1 class="display-3 mb-3 animated slideInDown">{{ cat.name }}</h1>
+        <nav aria-label="breadcrumb animated slideInDown">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a class="text-body" href="/index/">Home</a></li>
+                <li class="breadcrumb-item " aria-current="page">categories</li>
+                <li class="breadcrumb-item text-dark active" aria-current="page">{{ cat.name }}</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+<!-- Page Header End -->
+
+<!-- Product Start -->
+<div class="container-xxl py-5">
+    <div class="container">
+        <div class="row g-0 gx-5 align-items-end">
+            <div class="col-lg-6">
+                <div class="section-header text-start mb-5 wow fadeInUp" data-wow-delay="0.1s" style="max-width: 500px;">
+                    <h1 class="display-5 mb-3">Our Menu</h1>
+                    <p>Explore our delicious offerings below.</p>
+                </div>
+            </div>
+            <!-- search starts  -->
+            <div class="col-lg-6 text-end">
+                <form class="d-flex wow fadeInUp" method="get" action="" data-wow-delay="0.1s">
+                    <input class="form-control me-2" type="search" name="search" placeholder="Search menu" value="{{ search_query }}" aria-label="Search">
+                    <button class="btn btn-primary rounded-pill" type="submit">Search</button>
+                </form>
+            </div>
+            
+            <!-- search ends -->
+        </div>
+
+        <div class="row g-4">
+            {% for product in products %}
+            <div class="col-xl-3 col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+                <div class="product-item">
+                    <div class="position-relative bg-light overflow-hidden">
+                        <img class="img-fluid w-100" src="{{ product.fimage.url }}" alt="{{ product.name }}">
+                    </div>
+                    <div class="text-center p-4">
+                        <a class="d-block h5 mb-2" href="">{{ product.name }}</a>
+                        <span style="font-weight: bold; color: green;">₹</span>{{ product.price }}
+                    </div>
+        
+                    <div class="border-top text-center py-2">
+                        <a class="text-body" href="#" data-bs-toggle="modal" data-bs-target="#addToListModal-{{ product.id }}">
+                            <i class="fa fa-shopping-bag text-primary me-2"></i> Add to my List
+                        </a>
+                        
+                        
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center">
+                <p>No products found in this category.</p>
+            </div>
+            {% endfor %}
+        </div>
+        <!-- Product End -->
+        
+      <!-- Modal -->
+{% for product in products %}
+<div class="modal fade" id="addToListModal-{{ product.id }}" data-bs-backdrop="static" tabindex="-1" aria-labelledby="addToListModalLabel-{{ product.id }}" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="addToListModalLabel-{{ product.id }}">Add to My List</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" style="margin: 100px;margin-left: -30px;margin-top: 140px;">
+                <form id="addToListForm-{{ product.id }}" method="post" action="{% url 'add_to_cart' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="product_id" value="{{ product.id }}">
+                    <div class="mb-3">
+                        <img id="foodImage-{{ product.id }}" class="img-fluid" src="{{ product.fimage.url }}" height="50px" width="50px" alt="{{ product.name }}">
+                    </div>
+                    <div class="mb-3">
+                        <label for="foodName-{{ product.id }}" class="form-label">Food Name</label>
+                        <input type="text" class="form-control" id="foodName-{{ product.id }}" value="{{ product.name }}" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label for="foodPrice-{{ product.id }}" class="form-label">Price</label>
+                        <input type="text" class="form-control" id="foodPrice-{{ product.id }}" value="{{ product.price }}" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label for="foodQuantity-{{ product.id }}" class="form-label">Quantity</label>
+                        <input type="number" class="form-control" name="quantity" id="foodQuantity-{{ product.id }}" value="1" min="1" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Add to List</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS (make sure it's included) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+
+<script>
+  function addToList(productId) {
+    const quantity = document.getElementById(`foodQuantity-${productId}`).value;
+
+    fetch("{% url 'add_to_cart' %}", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': '{{ csrf_token }}',
+        },
+        body: JSON.stringify({
+            product_id: productId,
+            quantity: quantity,
+        }),
+    })
+    .then(response => {
+        if (response.ok) {
+            // Close the modal after successful addition
+            const modal = bootstrap.Modal.getInstance(document.getElementById(`addToListModal-${productId}`));
+            modal.hide();
+            alert('Added to cart successfully!');
+        } else {
+            alert('Failed to add to cart.');
+        }
+    })
+    .catch(error => console.error('Error:', error));
+
+    // Prevent the default form submission
+    return false;
+}
+
+
+function addToList(productId) {
+    const quantity = document.getElementById(`foodQuantity-${productId}`).value;
+
+    fetch("{% url 'add_to_cart' %}", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': '{{ csrf_token }}',
+        },
+        body: JSON.stringify({
+            product_id: productId,
+            quantity: quantity,
+        }),
+    })
+    .then(response => {
+        if (response.ok) {
+            // Close the modal after successful addition
+            const modal = bootstrap.Modal.getInstance(document.getElementById(`addToListModal-${productId}`));
+            modal.hide();
+            showToast();  // Call the function to show the toast
+        } else {
+            alert('Failed to add to cart.');
+        }
+    })
+    .catch(error => console.error('Error:', error));
+
+    // Prevent the default form submission
+    return false;
+}
+
+// Function to show the toast notification
+function showToast() {
+    const toastEl = document.getElementById('toast');
+    const toast = new bootstrap.Toast(toastEl);
+
+    toast.show(); // Show the toast
+
+    // Hide the toast after 3 seconds
+    setTimeout(() => {
+        toast.hide();
+    }, 3000);
+}
+
+
+</script>
+{% endfor %}
+
+
+{% endblock %}

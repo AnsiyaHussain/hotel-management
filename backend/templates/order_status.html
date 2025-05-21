@@ -1,0 +1,117 @@
+{% extends 'menu.html' %}
+{% block content %}
+{% load static %}
+
+<!-- order status starts -->
+<div class="container" style="margin-top: 100px;">
+    <h2 style="text-align: center; margin-top: 190px; margin-bottom: 60px;">My Order Status</h2>
+    <nav aria-label="breadcrumb animated slideInDown" style="margin-left: 480px;margin-top: -40px;margin-bottom: 30px;">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a class="text-body" href="/view_cart/">Back to cart</a></li>
+            <li class="breadcrumb-item"><a class="text-body" href="#">Status</a></li>                    
+        </ol>
+    </nav>
+    {% if user_orders %}
+        {% for order in user_orders %}
+      
+                <div class="card">
+                    <div class="card-header">
+                        <!-- Display the order_date at the top-right of the card -->
+                        <span class="order-date">Order Date: {{ order.order_date|date:"F j, Y" }}</span>
+                    </div>
+                    <div class="card-body">
+                        <p>Event Date: {{ order.eventdate }}</p>
+                        <p>Preferred Time: {{ order.preferred_time|time:"H:i" }}</p>
+                        <p>Venue: {{ order.venue }}</p>
+
+                        {% if order.status == 'Approved' %}
+                            <div class="alert alert-success" role="alert">
+                                Yay! Your order is successfully placed and will be on your steps on {{ order.eventdate|date:"F j, Y" }}.
+                            </div>
+                        {% elif order.status == 'Pending' %}
+                            <div class="alert alert-warning" role="alert">
+                                Your order is still pending. Please wait for confirmation.
+                            </div>
+                        {% elif order.status == 'Rejected' %}
+                            <div class="alert alert-danger" role="alert">
+                                Sorry! We can't proceed with your order. For more details call <mark>+91 7876456453</mark>.
+                            </div>
+                        {% endif %}
+
+                        {% for item in order.order_items.all %}
+                        <div class="row mb-2">
+                            <div class="col-6 text-left">
+                                {{ item.product.name }}
+                            </div>
+                            <div class="col-3 text-right">
+                                {{ item.qty }}
+                            </div>
+                            <div class="col-3 text-right">
+                                {{ item.tprice }}
+                            </div>
+                        </div>
+                        {% endfor %}
+                        <div style="margin-left: 360px; color: green;">
+                            <strong>Payable amount :  <mark>  {{ order.total_price }}</mark> Rs</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="alert alert-info" role="alert">
+            No orders found.
+        </div>
+    {% endif %}
+
+<!-- order status ends -->
+
+<style>
+    .order-status-message {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 20px;
+        background-color: #f9f9f9;
+    }
+
+    .alert {
+        margin-top: 10px;
+        padding: 10px;
+        border-radius: 5px;
+    }
+
+    .card {
+        margin-left: 70px;
+        margin-top: 10px;
+        width: 1000px;
+    }
+
+    .card-header {
+        position: relative;
+        padding: 10px;
+    }
+
+    .order-date {
+        position: absolute;
+        top: 1px;
+        right: 10px;
+        font-size: 14px;
+        color: #555;
+    }
+
+    .card-body {
+        padding: 0;
+    }
+
+    .row {
+        padding: 10px 15px;
+        border-bottom: 1px solid #eee;
+    }
+
+    .card-footer {
+        background-color: #f9f9f9;
+    }
+</style>
+
+{% endblock %}

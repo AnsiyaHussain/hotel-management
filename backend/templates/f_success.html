@@ -1,0 +1,9 @@
+{% extends 'feedback_rate.html' %}
+
+{% block content %}
+<div class="container mt-5" ><br><br><br><br><br><br>
+    <h2>Thank you for your feedback!</h2><br><br>
+    <p >Your feedback has been submitted successfully.</p>
+    <a href="{% url 'feedback' %}"  class="btn btn-primary">Submit Another Feedback</a>
+</div>
+{% endblock %}

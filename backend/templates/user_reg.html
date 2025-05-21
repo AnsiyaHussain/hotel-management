@@ -1,0 +1,530 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="UTF-8">
+    <title>User register </title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Fontawesome CDN Link -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  </head>
+<body>
+  <div class="container">
+    {% if message %}
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    {% endif %}
+    <input type="checkbox" id="flip">
+    <div class="cover">
+      <div class="front">
+        <img src="{% static 'img/s2.jpg' %}" alt="">
+        <div class="text">
+          <span class="text-1">Every new friend is a <br> new adventure</span>
+          <span class="text-2">Let's get connected</span>
+        </div>
+      </div>
+      <div class="back">
+        <img class="backImg" src="{% static 'img/s3.jpg' %}" alt="">
+        <div class="text">
+          <span class="text-1">Complete miles of journey <br> with one step</span>
+          <span class="text-2">Let's get started</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="forms">
+        <div class="form-content">
+          <div class="login-form">
+            <div class="title">Signin</div>
+          <form action="{% url 'login' %}" method="post">
+            {% csrf_token %}
+            <div class="input-boxes">
+              <div class="input-box">
+                <i class="fas fa-envelope"></i>
+                <input type="email" placeholder="Enter your email" name="email" required>
+              </div>
+              <div class="input-box">
+                <i class="fas fa-lock"></i>
+                <input type="password" id="password" placeholder="Enter your password" name="psw" required>
+                <i class="fas fa-eye" id="togglePassword"></i>
+              </div>
+              
+              <!-- Include Font Awesome for the icons -->
+              <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+              
+              <script>
+                // Get the toggle button and password input field
+                const togglePassword = document.getElementById('togglePassword');
+                const passwordField = document.getElementById('password');
+              
+                // Toggle password visibility on click
+                togglePassword.addEventListener('click', function() {
+                  // Toggle the input type between password and text
+                  const type = passwordField.type === 'password' ? 'text' : 'password';
+                  passwordField.type = type;
+              
+                  // Toggle the eye icon between open and closed
+                  this.classList.toggle('fa-eye-slash');
+                });
+              </script>
+              
+              <style>
+                .input-box {
+                  position: relative;
+                  width: 250px;
+                }
+              
+                .input-box input {
+                  width: 100%;
+                  padding: 10px;
+                  padding-right: 40px; /* Make space for the eye icon */
+                  border: 1px solid #ccc;
+                  border-radius: 5px;
+                }
+              
+                .input-box i {
+                  position: absolute;
+                  right: 10px;
+                  top: 50%;
+                  transform: translateY(-50%);
+                  cursor: pointer;
+                  color: #aaa;
+                }
+              
+                /* Change color when eye icon is clicked */
+                .input-box i:hover {
+                  color: #333;
+                }
+              
+                /* Optional: Custom styles for the password input field */
+                .input-box input:focus {
+                  border-color: #007BFF;
+                  outline: none;
+                }
+              </style>
+              
+              <div class="button input-box">
+                <input type="submit" value="Sign in">
+              </div>
+              <div class="text sign-up-text">Don't have an account? <label for="flip">Sigup now</label></div>
+            </div>
+        </form>
+      </div>
+
+        <div class="signup-form">
+          <div class="title">Signup</div>
+          <form action="{% url 'registration' %}" method="post" onsubmit="return validatePassword()">
+              {% csrf_token %}
+              <div class="input-boxes">
+                <div class="input-box">
+                  <i class="fas fa-user"></i>
+                  <input type="text" placeholder="Username" name="uname" required pattern="^[A-Za-z. ]+$" title="Only alphabetic characters, spaces, and dots are allowed for username">
+              </div>
+              
+          
+                  <div class="input-box">
+                      <i class="fas fa-envelope"></i>
+                      <input type="email" placeholder="Email address" name="email" required>
+                  </div>
+          
+                  <div class="input-box">
+                      <i class="fas fa-phone"></i>
+                      <input type="tel" placeholder="Phone number" name="phn" required pattern="^\d{10}$" title="Please enter a valid 10-digit phone number.">
+                  </div>
+          
+                  <div class="input-box" style="position: relative; margin-bottom: 20px;">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="passwordInput" placeholder="Secure password" name="psw" required minlength="6" style="padding-right: 40px;">
+                    <div id="error-message" class="error-message"></div>
+                    <i class="fas fa-eye" id="togglePassword" onclick="togglePasswordVisibility()" style="cursor: pointer; position: absolute; right: 15px; top: 50%; transform: translateY(-50%);"></i>
+                </div>
+                
+                <script>
+                    // Password visibility toggle function
+                    function togglePasswordVisibility() {
+                        const passwordInput = document.getElementById('passwordInput');
+                        const passwordType = passwordInput.type === 'password' ? 'text' : 'password';
+                        passwordInput.type = passwordType;
+                    }
+                
+                    // Password validation function
+                    document.getElementById('passwordInput').addEventListener('input', function () {
+                        const password = this.value;
+                        const errorMessage = document.getElementById('error-message');
+                
+                        // Regular expression for password strength check
+                        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{6,}$/;
+                
+                        // Check password against the regex
+                        if (!passwordRegex.test(password)) {
+                            errorMessage.textContent = 'Password must contain at least one lowercase letter, one uppercase letter, one number, and one special character.';
+                            errorMessage.style.display = 'block';
+                        } else {
+                            errorMessage.textContent = ''; // Clear the error message if the password is valid
+                            errorMessage.style.display = 'none';
+                        }
+                    });
+                </script>
+                
+                <style>
+                    /* Styling for the error message */
+                    .error-message {
+                        display: none; /* Hidden by default */
+                        font-size: 14px;
+                        color: #d9534f; /* Bootstrap's 'danger' red color */
+                        background-color: #f8d7da; /* Light red background */
+                        border: 1px solid #f5c6cb; /* Light border */
+                        border-radius: 4px;
+                        padding: 8px;
+                        margin-top: 5px;
+                        font-family: Arial, sans-serif;
+                    }
+                
+                    /* Add an icon to the error message */
+                    .error-message::before {
+                        content: "\f06a"; /* Unicode for 'fa-exclamation-circle' */
+                        font-family: "Font Awesome 5 Free"; /* Font Awesome 5 */
+                        font-weight: 900;
+                        margin-right: 8px;
+                        color: #d9534f;
+                    }
+                
+                    /* Add some styling to the input box */
+                    .input-box {
+                        position: relative;
+                        display: flex;
+                        align-items: center;
+                    }
+                
+                    input[type="password"] {
+                        width: 100%;
+                        padding: 10px;
+                        padding-right: 40px; /* Extra padding for the eye icon */
+                        font-size: 16px;
+                        border-radius: 4px;
+                        border: 1px solid #ccc;
+                    }
+                
+                    /* Style for the eye icon */
+                    #togglePassword {
+                        position: absolute;
+                        right: 15px;
+                        top: 50%;
+                        transform: translateY(-50%);
+                        color: #777;
+                        font-size: 18px;
+                    }
+                </style>
+                
+                  <div class="button input-box">
+                      <input type="submit" value="Sign up">
+                  </div>
+                  <div class="text sign-up-text">Already have an account? <label for="flip">Login now</label></div>
+              </div>
+          </form>
+          
+          <script>
+            function togglePasswordVisibility() {
+                const passwordInput = document.getElementById("passwordInput");
+                const togglePasswordIcon = document.getElementById("togglePassword");
+                
+                if (passwordInput.type === "password") {
+                    passwordInput.type = "text"; // Show password
+                    togglePasswordIcon.classList.remove("fa-eye");
+                    togglePasswordIcon.classList.add("fa-eye-slash");
+                } else {
+                    passwordInput.type = "password"; // Hide password
+                    togglePasswordIcon.classList.remove("fa-eye-slash");
+                    togglePasswordIcon.classList.add("fa-eye");
+                }
+            }
+          </script>
+        </div>
+    </div>
+  </div>
+  <style>
+  .input-box {
+    position: relative; /* Ensure the icon is positioned relative to the input box */
+}
+
+#togglePassword {
+    color: #20c997; /* Change to your desired icon color */
+    cursor: pointer;
+    position: absolute;
+    right: 15px; /* Space from the right */
+    top: 50%; /* Center vertically */
+    transform: translateY(-50%); /* Adjust for exact center */
+}
+
+    /* Google Font Link */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #20c997;
+  
+  padding: 30px;
+}
+
+.container {
+  position: relative;
+  max-width: 850px;
+  width: 100%;
+  background: #fff;
+  padding: 40px 30px;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+  perspective: 2700px;
+}
+
+.container .cover {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  height: 100%;
+  width: 50%;
+  z-index: 98;
+  transition: all 1s ease;
+  transform-origin: left;
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+}
+
+.container #flip:checked ~ .cover {
+  transform: rotateY(-180deg);
+}
+
+.container #flip:checked ~ .forms .login-form {
+  pointer-events: none;
+}
+
+.container .cover .front,
+.container .cover .back {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+}
+
+.cover .back {
+  transform: rotateY(180deg);
+}
+
+.container .cover img {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  z-index: 10;
+}
+
+.container .cover .text {
+  position: absolute;
+  z-index: 10;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.container .cover .text::before {
+  content: '';
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  opacity: 0.5;
+  background: #20c997;
+  
+}
+
+.cover .text .text-1,
+.cover .text .text-2 {
+  z-index: 20;
+  font-size: 26px;
+  font-weight: 600;
+  color: #fff;
+  text-align: center;
+}
+
+.cover .text .text-2 {
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.container .forms {
+  height: 100%;
+  width: 100%;
+  background: #fff;
+}
+
+.container .form-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.form-content .login-form,
+.form-content .signup-form {
+  width: calc(100% / 2 - 25px);
+}
+
+.forms .form-content .title {
+  position: relative;
+  font-size: 24px;
+  font-weight: 500;
+  color: #333;
+}
+
+.forms .form-content .title:before {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 3px;
+  width: 25px;
+  background: #20c997;
+  
+}
+
+.forms .signup-form .title:before {
+  width: 20px;
+}
+
+.forms .form-content .input-boxes {
+  margin-top: 30px;
+}
+
+.forms .form-content .input-box {
+  display: flex;
+  align-items: center;
+  height: 50px;
+  width: 100%;
+  margin: 10px 0;
+  position: relative;
+}
+
+.form-content .input-box input {
+  height: 100%;
+  width: 100%;
+  outline: none;
+  border: none;
+  padding: 0 30px;
+  font-size: 16px;
+  font-weight: 500;
+  border-bottom: 2px solid rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+.form-content .input-box input:focus,
+.form-content .input-box input:valid {
+  border-color: #20c997;
+  
+}
+
+.form-content .input-box i {
+  position: absolute;
+  color: #20c997;
+  
+  font-size: 17px;
+}
+
+.forms .form-content .text {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+}
+
+.forms .form-content .text a {
+  text-decoration: none;
+}
+
+.forms .form-content .text a:hover {
+  text-decoration: underline;
+}
+
+.forms .form-content .button {
+  color: #fff;
+  margin-top: 40px;
+}
+
+.forms .form-content .button input {
+  color: #fff;
+  background: #20c997;
+  
+  border-radius: 6px;
+  padding: 0;
+  cursor: pointer;
+  transition: all 0.4s ease;
+}
+
+.forms .form-content .button input:hover {
+  background: #20c997;
+  
+}
+
+.forms .form-content label {
+  color: red;
+  cursor: pointer;
+}
+
+.forms .form-content label:hover {
+  text-decoration: underline;
+}
+
+.forms .form-content .login-text,
+.forms .form-content .sign-up-text {
+  text-align: center;
+  margin-top: 25px;
+}
+
+.container #flip {
+  display: none;
+}
+
+@media (max-width: 730px) {
+  .container .cover {
+    display: none;
+  }
+
+  .form-content .login-form,
+  .form-content .signup-form {
+    width: 100%;
+  }
+
+  .form-content .signup-form {
+    display: none;
+  }
+
+  .container #flip:checked ~ .forms .signup-form {
+    display: block;
+  }
+
+  .container #flip:checked ~ .forms .login-form {
+    display: none;
+  }
+}
+
+  </style>
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
